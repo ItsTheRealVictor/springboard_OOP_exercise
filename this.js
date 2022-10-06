@@ -1,25 +1,71 @@
 class Game {
-    constructor(height, width){
-      this.height = height
-      this.width = width
 
-      this.currPlayer = 1
-      this.board = []
+    // I wasn't really even close with the constructor. I didn't put any of the methods or the p1/p2, etc.
+
+    //my code 
+
+
+    // constructor(height, width){
+    //   this.height = height
+    //   this.width = width
+
+    //   this.currPlayer = 1
+    //   this.board = []
+    // }
+
+
+    // end of my code
+
+    //solution code
+
+    constructor(p1, p2, height = 6, width = 7) {
+        this.players = [p1, p2];
+        this.height = height;
+        this.width = width;
+        this.currPlayer = p1;
+        this.makeBoard();
+        this.makeHtmlBoard();
+        this.gameOver = false;
     }
 
+    // end of solution code
+
+
     makeBoard(){
+        // my code. missed declaring this.board, but I did get this.height and this.board
+
+        // for (let y = 0; y < this.height; y++) {
+        //     this.board.push(Array.from({ length: this.width }));
+        //   }
+
+        // end my code
+
+        // solution code
+
+        this.board = [];
         for (let y = 0; y < this.height; y++) {
-            board.push(Array.from({ length: this.width }));
-          }
+          this.board.push(Array.from({ length: this.width }));
+        }
+
+        // end solution code
     }
 
     makeHtmlBoard() {
         const board = document.getElementById('board');
+        // I missed this innerHTML setting
+        board.innerHTML = ''
       
         // make column tops (clickable area for adding a piece to that column)
         const top = document.createElement('tr');
         top.setAttribute('id', 'column-top');
-        top.addEventListener('click', handleClick);
+
+        // solution code snippet: I completely missed this
+
+        this.handleGameClick = this.handleClick.bind(this);
+        top.addEventListener("click", this.handleGameClick);
+
+        // end snippet
+
       
         for (let x = 0; x < this.width; x++) {
           const headCell = document.createElement('td');
@@ -27,22 +73,32 @@ class Game {
           top.append(headCell);
         }
       
-        this.board.append(top);
-      
+        // solution snippet: why isn't it "this.board"?
+
+        board.append(top);
+        
+        // end snippet
+
         // make main part of board
+
+        // I got this part right in my code 
         for (let y = 0; y < this.height; y++) {
           const row = document.createElement('tr');
       
-          for (let x = 0; x < this.width; x++) {
+        for (let x = 0; x < this.width; x++) {
             const cell = document.createElement('td');
             cell.setAttribute('id', `${y}-${x}`);
             row.append(cell);
           }
       
-          this.board.append(row);
+          // solution snippet. Whis isn't it "this.board"?
+          board.append(row);
+          // end snippet
         }
       }
 
+
+      // nice! I got this function right.
       findSpotForCol(x) {
         for (let y = this.height - 1; y >= 0; y--) {
           if (!this.board[y][x]) {
@@ -52,19 +108,32 @@ class Game {
         return null;
       }
 
+
+      // nice! I got this function right too. (not actually different from the non-OOP code)
       placeInTable(y, x) {
         const piece = document.createElement('div');
         piece.classList.add('piece');
-        piece.classList.add(`p${currPlayer}`);
-        piece.style.top = -50 * (y + 2);
-      
+        piece.style.backgroundColor = this.currPlayer.color
+
+        // no idea what this is for?
+        piece.style.top = -50 * (y + 2)
+
+
         const spot = document.getElementById(`${y}-${x}`);
         spot.append(piece);
       }
 
+
+      // Solution code snippet: I missed all of this
       endGame(msg) {
         alert(msg);
+
+        // whats the reason for this?
+        const top = document.querySelector("#column-top");
+        top.removeEventListener("click", this.handleGameClick);
       }
+
+      // end snippet
 
       handleClick(evt) {
         // get x from ID of clicked cell
@@ -80,18 +149,22 @@ class Game {
         this.board[y][x] = this.currPlayer;
         this.placeInTable(y, x);
         
-        // check for win
-        if (this.checkForWin()) {
-          return endGame(`Player ${this.currPlayer} won!`);
-        }
-        
+        this.board[y][x] = this.currPlayer
+        this.placeInTable(y, x)
+
         // check for tie
         if (this.board.every(row => row.every(cell => cell))) {
-          return endGame('Tie!');
+          return this.endGame('Tie!');
+        }
+
+        if (this.checkForWin){
+            this.gameOver = true
+            return this.endGame(`The ${this.currPlayer.color} player won!`)
         }
           
         // switch players
-        this.currPlayer = this.currPlayer === 1 ? 2 : 1;
+        // Solution snippet: missed this too
+        this.currPlayer = this.currPlayer === this.players[0] ? this.players[1] : this.players[0];
       }
       
       
@@ -104,9 +177,9 @@ class Game {
               return cells.every(
         ([y, x]) =>
           y >= 0 &&
-          y < HEIGHT &&
+          y < this.height &&
           x >= 0 &&
-          x < WIDTH &&
+          x < this.width &&
           this.board[y][x] === this.currPlayer
           );
     }
@@ -129,4 +202,16 @@ class Game {
 }
 }
 
-const example = new Game(6, 7)
+// nice! I got this
+class Player{
+    constructor(color){
+        this.color = color
+    }
+}
+
+// missed all this stuff
+document.getElementById('start-game').addEventListener('click', () => {
+let p1 = new Player(document.getElementById('p1-color').value)
+let p2 = new Player(document.getElementById('p2-color').value)
+new Game(p1, p2)
+})
