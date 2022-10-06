@@ -5,17 +5,6 @@
  * board fills (tie)
  */
 
-class Game {
-  constructor(height, width, board){
-    this.height = height
-    this.width = width
-    this.board = board
-  }
-}
-
-
-
-
 
 const WIDTH = 7;
 const HEIGHT = 6;
